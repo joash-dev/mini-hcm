@@ -36,9 +36,9 @@ export default function AdminDashboard({ userProfile, onLogout }) {
   // Logout confirmation modal state
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  // Lock body scroll when mobile drawer is open
+  // Lock body scroll when mobile drawer or logout modal is open
   useEffect(() => {
-    if (isDrawerOpen) {
+    if (isDrawerOpen || showLogoutConfirm) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -46,7 +46,7 @@ export default function AdminDashboard({ userProfile, onLogout }) {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isDrawerOpen]);
+  }, [isDrawerOpen, showLogoutConfirm]);
 
   // Auto-close mobile drawer when switching tabs
   useEffect(() => {
@@ -243,7 +243,8 @@ export default function AdminDashboard({ userProfile, onLogout }) {
   };
 
   return (
-    <div className={`admin-layout ${isCollapsed ? "sidebar-collapsed" : ""}`}>
+    <>
+      <div className={`admin-layout ${isCollapsed ? "sidebar-collapsed" : ""}`}>
       {/* Sidebar Drawer Backdrop */}
       {isDrawerOpen && (
         <div className="sidebar-backdrop" onClick={() => setIsDrawerOpen(false)}></div>
@@ -713,6 +714,8 @@ export default function AdminDashboard({ userProfile, onLogout }) {
         </div>
       )}
 
+      </div>
+
       {showLogoutConfirm && (
         <div className="modal-overlay">
           <div className="modal-card">
@@ -729,6 +732,6 @@ export default function AdminDashboard({ userProfile, onLogout }) {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

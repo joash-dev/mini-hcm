@@ -21,11 +21,24 @@ export default function EmployeeDashboard({ userProfile, onLogout }) {
     refresh();
   }, [status, refresh]);
 
+  // Lock body scroll when logout confirmation modal is open
+  useEffect(() => {
+    if (showLogoutConfirm) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showLogoutConfirm]);
+
   const isLoading = punchLoading || summaryLoading;
   const error = punchError || summaryError;
 
   return (
-    <div className="dashboard">
+    <>
+      <div className="dashboard">
       <header className="dashboard-header">
         <div className="dashboard-header-left">
           <h1>Employee Dashboard</h1>
@@ -115,23 +128,24 @@ export default function EmployeeDashboard({ userProfile, onLogout }) {
           )}
         </section>
       </main>
+    </div>
 
-      {showLogoutConfirm && (
-        <div className="modal-overlay">
-          <div className="modal-card">
-            <h2>Sign Out Confirmation</h2>
-            <p className="modal-text">Are you sure you want to sign out?</p>
-            <div className="modal-actions">
-              <button className="btn btn-secondary" onClick={() => setShowLogoutConfirm(false)}>
-                Cancel
-              </button>
-              <button className="btn btn-danger" onClick={onLogout}>
-                Sign Out
-              </button>
-            </div>
+    {showLogoutConfirm && (
+      <div className="modal-overlay">
+        <div className="modal-card">
+          <h2>Sign Out Confirmation</h2>
+          <p className="modal-text">Are you sure you want to sign out?</p>
+          <div className="modal-actions">
+            <button className="btn btn-secondary" onClick={() => setShowLogoutConfirm(false)}>
+              Cancel
+            </button>
+            <button className="btn btn-danger" onClick={onLogout}>
+              Sign Out
+            </button>
           </div>
         </div>
-      )}
-    </div>
+      </div>
+    )}
+  </>
   );
 }
