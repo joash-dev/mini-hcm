@@ -717,18 +717,12 @@ export default function AdminDashboard({ userProfile, onLogout }) {
         <div className="modal-overlay">
           <div className="modal-card">
             <h2>Sign Out Confirmation</h2>
-            <p style={{ marginTop: "0.5rem", color: "var(--text-secondary)" }}>
-              Are you sure you want to sign out?
-            </p>
+            <p className="modal-text">Are you sure you want to sign out?</p>
             <div className="modal-actions">
               <button className="btn btn-secondary" onClick={() => setShowLogoutConfirm(false)}>
                 Cancel
               </button>
-              <button
-                className="btn btn-primary"
-                onClick={onLogout}
-                style={{ backgroundColor: "var(--danger)", borderColor: "var(--danger)" }}
-              >
+              <button className="btn btn-danger" onClick={onLogout}>
                 Sign Out
               </button>
             </div>

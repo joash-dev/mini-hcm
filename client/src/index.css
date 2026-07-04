@@ -491,6 +491,34 @@ body {
   background: rgba(61, 59, 243, 0.08);
 }
 
+.btn-danger {
+  background: var(--danger);
+  color: #FFFFFF;
+  border-color: var(--danger);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #dc2626; /* Hover red state */
+  border-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.25);
+}
+
+.btn-danger:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.btn-danger:focus-visible {
+  outline: 2px solid var(--danger);
+  outline-offset: 2px;
+}
+
 /* Full-width button in auth forms */
 .btn-block {
   width: 100%;
@@ -1059,13 +1087,19 @@ body {
   font-size: var(--font-size-xl);
   font-weight: 400;
   color: var(--text-primary);
-  margin-bottom: var(--space-xs);
+  margin-bottom: 8px;
+}
+
+.modal-text {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 24px;
 }
 
 .modal-actions {
   display: flex;
   gap: var(--space-md);
-  margin-top: var(--space-xl);
 }
 
 .modal-actions .btn {
