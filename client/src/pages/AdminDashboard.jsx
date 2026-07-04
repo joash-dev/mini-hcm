@@ -29,6 +29,9 @@ export default function AdminDashboard({ userProfile, onLogout }) {
   // Mobile navigation drawer state
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
+  // Desktop sidebar collapse state
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
   // Lock body scroll when mobile drawer is open
   useEffect(() => {
     if (isDrawerOpen) {
@@ -236,16 +239,23 @@ export default function AdminDashboard({ userProfile, onLogout }) {
   };
 
   return (
-    <div className="admin-layout">
+    <div className={`admin-layout ${isCollapsed ? "sidebar-collapsed" : ""}`}>
       {/* Sidebar Drawer Backdrop */}
       {isDrawerOpen && (
         <div className="sidebar-backdrop" onClick={() => setIsDrawerOpen(false)}></div>
       )}
 
       {/* Left Sidebar */}
-      <aside className={`admin-sidebar ${isDrawerOpen ? "open" : ""}`}>
+      <aside className={`admin-sidebar ${isDrawerOpen ? "open" : ""} ${isCollapsed ? "collapsed" : ""}`}>
         <div className="sidebar-top">
-          <span className="sidebar-logo">Mini HCM</span>
+          <button className="sidebar-toggle-desktop" onClick={() => setIsCollapsed(!isCollapsed)}>
+            <svg viewBox="0 0 24 24">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          {!isCollapsed && <span className="sidebar-logo">Mini HCM</span>}
           <button className="sidebar-close" onClick={() => setIsDrawerOpen(false)}>
             <svg viewBox="0 0 24 24">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -258,6 +268,7 @@ export default function AdminDashboard({ userProfile, onLogout }) {
           <button
             className={`sidebar-nav-item ${activeTab === "employees" ? "active" : ""}`}
             onClick={() => setActiveTab("employees")}
+            title={isCollapsed ? "Employees" : ""}
           >
             <svg className="nav-icon" viewBox="0 0 24 24">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -265,12 +276,13 @@ export default function AdminDashboard({ userProfile, onLogout }) {
               <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
               <path d="M16 3.13a4 4 0 0 1 0 7.75" />
             </svg>
-            <span>Employees</span>
+            {!isCollapsed && <span>Employees</span>}
           </button>
 
           <button
             className={`sidebar-nav-item ${activeTab === "daily" ? "active" : ""}`}
             onClick={() => setActiveTab("daily")}
+            title={isCollapsed ? "Daily Report" : ""}
           >
             <svg className="nav-icon" viewBox="0 0 24 24">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
@@ -278,29 +290,47 @@ export default function AdminDashboard({ userProfile, onLogout }) {
               <line x1="8" y1="2" x2="8" y2="6" />
               <line x1="3" y1="10" x2="21" y2="10" />
             </svg>
-            <span>Daily Report</span>
+            {!isCollapsed && <span>Daily Report</span>}
           </button>
 
           <button
             className={`sidebar-nav-item ${activeTab === "weekly" ? "active" : ""}`}
             onClick={() => setActiveTab("weekly")}
+            title={isCollapsed ? "Weekly Report" : ""}
           >
             <svg className="nav-icon" viewBox="0 0 24 24">
               <line x1="18" y1="20" x2="18" y2="10" />
               <line x1="12" y1="20" x2="12" y2="4" />
               <line x1="6" y1="20" x2="6" y2="14" />
             </svg>
-            <span>Weekly Report</span>
+            {!isCollapsed && <span>Weekly Report</span>}
           </button>
         </nav>
 
         <div className="sidebar-bottom">
-          <div className="admin-profile">
-            <p className="admin-name">{userProfile?.name || "Administrator"}</p>
-            <p className="admin-email">{userProfile?.email || "admin@hcm.com"}</p>
+          <div className="admin-profile-container">
+            <div className="admin-profile-avatar">
+              {getInitials(userProfile?.name || "Administrator")}
+            </div>
+            {!isCollapsed && (
+              <div className="admin-profile">
+                <p className="admin-name">{userProfile?.name || "Administrator"}</p>
+                <p className="admin-email">{userProfile?.email || "admin@hcm.com"}</p>
+              </div>
+            )}
           </div>
-          <button className="btn btn-secondary sidebar-logout-btn" onClick={onLogout}>
-            Sign Out
+          
+          <button 
+            className={`sidebar-logout-item ${isCollapsed ? "collapsed" : ""}`} 
+            onClick={onLogout}
+            title={isCollapsed ? "Sign Out" : ""}
+          >
+            <svg className="logout-icon" viewBox="0 0 24 24">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            {!isCollapsed && <span>Sign Out</span>}
           </button>
         </div>
       </aside>
