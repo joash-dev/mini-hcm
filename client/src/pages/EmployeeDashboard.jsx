@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAttendance } from "../hooks/useAttendance.js";
 import { useDailySummary } from "../hooks/useDailySummary.js";
 import PunchButton from "../components/PunchButton.jsx";
@@ -14,6 +14,7 @@ import { formatMinutes, formatDecimalHours } from "../utils/formatters.js";
 export default function EmployeeDashboard({ userProfile, onLogout }) {
   const { status, loading: punchLoading, error: punchError, punch } = useAttendance();
   const { todaySummary, history, loading: summaryLoading, error: summaryError, refresh } = useDailySummary(userProfile?.id);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   // Automatically refresh summary data whenever attendance status changes (e.g. after punch out)
   useEffect(() => {
@@ -32,7 +33,7 @@ export default function EmployeeDashboard({ userProfile, onLogout }) {
             Welcome, <strong>{userProfile?.name || "Employee"}</strong>
           </p>
         </div>
-        <button className="btn btn-secondary" onClick={onLogout}>
+        <button className="btn btn-secondary" onClick={() => setShowLogoutConfirm(true)}>
           Sign Out
         </button>
       </header>
@@ -114,6 +115,29 @@ export default function EmployeeDashboard({ userProfile, onLogout }) {
           )}
         </section>
       </main>
+
+      {showLogoutConfirm && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h2>Sign Out Confirmation</h2>
+            <p style={{ marginTop: "0.5rem", color: "var(--text-secondary)" }}>
+              Are you sure you want to sign out?
+            </p>
+            <div className="modal-actions">
+              <button className="btn btn-secondary" onClick={() => setShowLogoutConfirm(false)}>
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={onLogout}
+                style={{ backgroundColor: "var(--danger)", borderColor: "var(--danger)" }}
+              >
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

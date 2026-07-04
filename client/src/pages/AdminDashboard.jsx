@@ -33,6 +33,9 @@ export default function AdminDashboard({ userProfile, onLogout }) {
   // Desktop sidebar collapse state
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  // Logout confirmation modal state
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
   // Lock body scroll when mobile drawer is open
   useEffect(() => {
     if (isDrawerOpen) {
@@ -323,7 +326,7 @@ export default function AdminDashboard({ userProfile, onLogout }) {
           
           <button 
             className={`sidebar-logout-item ${isCollapsed ? "collapsed" : ""}`} 
-            onClick={onLogout}
+            onClick={() => setShowLogoutConfirm(true)}
             title={isCollapsed ? "Sign Out" : ""}
           >
             <svg className="logout-icon" viewBox="0 0 24 24">
@@ -706,6 +709,29 @@ export default function AdminDashboard({ userProfile, onLogout }) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showLogoutConfirm && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h2>Sign Out Confirmation</h2>
+            <p style={{ marginTop: "0.5rem", color: "var(--text-secondary)" }}>
+              Are you sure you want to sign out?
+            </p>
+            <div className="modal-actions">
+              <button className="btn btn-secondary" onClick={() => setShowLogoutConfirm(false)}>
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={onLogout}
+                style={{ backgroundColor: "var(--danger)", borderColor: "var(--danger)" }}
+              >
+                Sign Out
+              </button>
+            </div>
           </div>
         </div>
       )}
