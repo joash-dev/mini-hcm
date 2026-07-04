@@ -474,6 +474,42 @@ body {
   border: 1px solid rgba(243, 156, 18, 0.2);
 }
 
+.text-danger {
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+/* Modal styling */
+.modal-overlay {
+  animation: fadeIn 200ms ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Form selection input styling overrides */
+.auth-form select,
+.auth-form input[type="date"],
+.auth-form input[type="time"] {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+}
+
+.auth-form select:focus,
+.auth-form input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+}
+
 /* ── Responsive ── */
 @media (max-width: 640px) {
   .auth-card {

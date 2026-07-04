@@ -141,3 +141,91 @@ export async function getUserSummaryHistory(userId) {
 
   return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 }
+
+/**
+ * Fetch all users with the "employee" role.
+ * @returns {Promise<Array>} List of employee user records
+ */
+export async function getAllEmployees() {
+  const snap = await db()
+    .collection("users")
+    .where("role", "==", "employee")
+    .get();
+
+  return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+}
+
+/**
+ * Fetch all attendance punch logs for a specific employee, ordered by timestamp ascending.
+ * @param {string} userId
+ * @returns {Promise<Array>} List of punch records
+ */
+export async function getEmployeeAttendance(userId) {
+  const snap = await db()
+    .collection("attendance")
+    .where("userId", "==", userId)
+    .orderBy("timestamp", "asc")
+    .get();
+
+  return snap.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+    timestamp: doc.data().timestamp.toDate().toISOString(), // format for client
+  }));
+}
+
+/**
+ * Add or update an attendance record (admin override).
+ * If id is omitted, a new punch record is added.
+ * @param {Object} punch
+ * @param {string} [punch.id] - Optional, updates existing if provided
+ * @param {string} punch.userId
+ * @param {string} punch.type - "in" | "out"
+ * @param {Date} punch.timestamp
+ */
+export async function saveOrUpdateAttendance(punch) {
+  const { Timestamp } = await import("firebase-admin/firestore");
+  const data = {
+    userId: punch.userId,
+    type: punch.type,
+    timestamp: Timestamp.fromDate(new Date(punch.timestamp)),
+  };
+
+  if (punch.id) {
+    await db().collection("attendance").doc(punch.id).set(data, { merge: true });
+    return punch.id;
+  } else {
+    const ref = await db().collection("attendance").add(data);
+    return ref.id;
+  }
+}
+
+/**
+ * Fetch all daily summaries for a specific date across all employees.
+ * @param {string} date - "YYYY-MM-DD"
+ * @returns {Promise<Array>} Daily summaries
+ */
+export async function getDailySummariesForDate(date) {
+  const snap = await db()
+    .collection("dailySummary")
+    .where("date", "==", date)
+    .get();
+
+  return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+}
+
+/**
+ * Fetch all daily summaries within a date range (inclusive) across all employees.
+ * @param {string} startDate - "YYYY-MM-DD"
+ * @param {string} endDate - "YYYY-MM-DD"
+ * @returns {Promise<Array>} Daily summaries in the range
+ */
+export async function getDailySummariesInRange(startDate, endDate) {
+  const snap = await db()
+    .collection("dailySummary")
+    .where("date", ">=", startDate)
+    .where("date", "<=", endDate)
+    .get();
+
+  return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+}

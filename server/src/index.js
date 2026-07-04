@@ -7,6 +7,7 @@ import { resolve } from "path";
 import userRoutes from "./routes/userRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
 import summaryRoutes from "./routes/summaryRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 /* ── Firebase Admin SDK Initialization ── */
 const serviceAccountPath = resolve(process.env.SERVICE_ACCOUNT_PATH);
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/summary", summaryRoutes);
+app.use("/api/admin", adminRoutes);
 
 /* ── Health Check ── */
 app.get("/api/health", (_req, res) => {
