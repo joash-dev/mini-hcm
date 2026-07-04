@@ -10,8 +10,27 @@ import summaryRoutes from "./routes/summaryRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 
 /* ── Firebase Admin SDK Initialization ── */
-const serviceAccountPath = resolve(process.env.SERVICE_ACCOUNT_PATH);
-const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, "utf-8"));
+let serviceAccount;
+
+if (process.env.SERVICE_ACCOUNT_JSON) {
+  try {
+    serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT_JSON);
+  } catch (err) {
+    console.error("Error parsing SERVICE_ACCOUNT_JSON environment variable:", err);
+    process.exit(1);
+  }
+} else if (process.env.SERVICE_ACCOUNT_PATH) {
+  try {
+    const serviceAccountPath = resolve(process.env.SERVICE_ACCOUNT_PATH);
+    serviceAccount = JSON.parse(readFileSync(serviceAccountPath, "utf-8"));
+  } catch (err) {
+    console.error(`Error reading service account file from path ${process.env.SERVICE_ACCOUNT_PATH}:`, err);
+    process.exit(1);
+  }
+} else {
+  console.error("Error: Neither SERVICE_ACCOUNT_JSON nor SERVICE_ACCOUNT_PATH environment variables are defined.");
+  process.exit(1);
+}
 
 initializeApp({ credential: cert(serviceAccount) });
 
