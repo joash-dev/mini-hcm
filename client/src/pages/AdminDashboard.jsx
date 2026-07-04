@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { apiRequest } from "../services/api.js";
 import DataTable from "../components/DataTable.jsx";
-import { formatMinutes } from "../utils/formatters.js";
+import { formatMinutes, formatDecimalHours } from "../utils/formatters.js";
 
 export default function AdminDashboard({ userProfile, onLogout }) {
   const [activeTab, setActiveTab] = useState("employees"); // "employees" | "daily" | "weekly"
@@ -564,13 +564,13 @@ export default function AdminDashboard({ userProfile, onLogout }) {
                   <p>No summaries found for this date. Run computations for employees to populate.</p>
                 </div>
               ) : (
-                <DataTable headers={["Employee", "Regular (hrs)", "OT (hrs)", "ND (hrs)", "Late", "Undertime", "Status"]}>
+                <DataTable headers={["Employee", "Regular", "OT", "ND", "Late", "Undertime", "Status"]}>
                   {dailyReport.map((row) => (
                     <tr key={row.id}>
                       <td className="font-semibold">{row.employeeName}</td>
-                      <td>{row.regularHrs.toFixed(2)}</td>
-                      <td>{row.ot.toFixed(2)}</td>
-                      <td>{row.nd.toFixed(2)}</td>
+                      <td>{formatDecimalHours(row.regularHrs)}</td>
+                      <td>{formatDecimalHours(row.ot)}</td>
+                      <td>{formatDecimalHours(row.nd)}</td>
                       <td>{formatMinutes(row.lateMinutes)}</td>
                       <td>{formatMinutes(row.undertimeMinutes)}</td>
                       <td>
@@ -634,13 +634,13 @@ export default function AdminDashboard({ userProfile, onLogout }) {
                   <p>No daily summaries found in this range.</p>
                 </div>
               ) : (
-                <DataTable headers={["Employee", "Regular (hrs)", "OT (hrs)", "ND (hrs)", "Late", "Undertime", "Days Worked", "Incompletes"]}>
+                <DataTable headers={["Employee", "Regular", "OT", "ND", "Late", "Undertime", "Days Worked", "Incompletes"]}>
                   {weeklyReport.map((row) => (
                     <tr key={row.userId}>
                       <td className="font-semibold">{row.employeeName}</td>
-                      <td>{row.regularHrs.toFixed(2)}</td>
-                      <td>{row.ot.toFixed(2)}</td>
-                      <td>{row.nd.toFixed(2)}</td>
+                      <td>{formatDecimalHours(row.regularHrs)}</td>
+                      <td>{formatDecimalHours(row.ot)}</td>
+                      <td>{formatDecimalHours(row.nd)}</td>
                       <td>{formatMinutes(row.lateMinutes)}</td>
                       <td>{formatMinutes(row.undertimeMinutes)}</td>
                       <td>{row.daysWorked}</td>

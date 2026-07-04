@@ -4,7 +4,7 @@ import { useDailySummary } from "../hooks/useDailySummary.js";
 import PunchButton from "../components/PunchButton.jsx";
 import KpiCard from "../components/KpiCard.jsx";
 import DataTable from "../components/DataTable.jsx";
-import { formatMinutes } from "../utils/formatters.js";
+import { formatMinutes, formatDecimalHours } from "../utils/formatters.js";
 
 /**
  * Employee Dashboard.
@@ -54,20 +54,20 @@ export default function EmployeeDashboard({ userProfile, onLogout }) {
           <div className="kpi-grid">
             <KpiCard
               label="Regular Hours"
-              value={todaySummary ? todaySummary.regularHrs.toFixed(2) : "0.00"}
-              unit="hrs"
+              value={todaySummary ? formatDecimalHours(todaySummary.regularHrs) : "0h"}
+              unit=""
               type="regular"
             />
             <KpiCard
               label="Overtime"
-              value={todaySummary ? todaySummary.ot.toFixed(2) : "0.00"}
-              unit="hrs"
+              value={todaySummary ? formatDecimalHours(todaySummary.ot) : "0h"}
+              unit=""
               type="overtime"
             />
             <KpiCard
               label="Night Diff"
-              value={todaySummary ? todaySummary.nd.toFixed(2) : "0.00"}
-              unit="hrs"
+              value={todaySummary ? formatDecimalHours(todaySummary.nd) : "0h"}
+              unit=""
               type="nd"
             />
             <KpiCard
@@ -94,13 +94,13 @@ export default function EmployeeDashboard({ userProfile, onLogout }) {
           ) : history.length === 0 ? (
             <div className="empty-state">No summaries recorded yet. Punch out to create your first record.</div>
           ) : (
-            <DataTable headers={["Date", "Regular (hrs)", "OT (hrs)", "ND (hrs)", "Late (min)", "Undertime (min)", "Status"]}>
+            <DataTable headers={["Date", "Regular", "OT", "ND", "Late", "Undertime", "Status"]}>
               {history.map((row) => (
                 <tr key={row.id}>
                   <td className="font-semibold">{row.date}</td>
-                  <td>{row.regularHrs.toFixed(2)}</td>
-                  <td>{row.ot.toFixed(2)}</td>
-                  <td>{row.nd.toFixed(2)}</td>
+                  <td>{formatDecimalHours(row.regularHrs)}</td>
+                  <td>{formatDecimalHours(row.ot)}</td>
+                  <td>{formatDecimalHours(row.nd)}</td>
                   <td>{formatMinutes(row.lateMinutes)}</td>
                   <td>{formatMinutes(row.undertimeMinutes)}</td>
                   <td>
