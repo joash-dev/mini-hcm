@@ -26,6 +26,26 @@ export default function AdminDashboard({ userProfile, onLogout }) {
   const [weeklyEnd, setWeeklyEnd] = useState("");
   const [weeklyReport, setWeeklyReport] = useState([]);
 
+  // Mobile navigation drawer state
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  // Lock body scroll when mobile drawer is open
+  useEffect(() => {
+    if (isDrawerOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isDrawerOpen]);
+
+  // Auto-close mobile drawer when switching tabs
+  useEffect(() => {
+    setIsDrawerOpen(false);
+  }, [activeTab]);
+
   // Set default dates on mount
   useEffect(() => {
     const today = new Date();
@@ -217,10 +237,21 @@ export default function AdminDashboard({ userProfile, onLogout }) {
 
   return (
     <div className="admin-layout">
+      {/* Sidebar Drawer Backdrop */}
+      {isDrawerOpen && (
+        <div className="sidebar-backdrop" onClick={() => setIsDrawerOpen(false)}></div>
+      )}
+
       {/* Left Sidebar */}
-      <aside className="admin-sidebar">
+      <aside className={`admin-sidebar ${isDrawerOpen ? "open" : ""}`}>
         <div className="sidebar-top">
           <span className="sidebar-logo">Mini HCM</span>
+          <button className="sidebar-close" onClick={() => setIsDrawerOpen(false)}>
+            <svg viewBox="0 0 24 24">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
         </div>
 
         <nav className="sidebar-nav">
@@ -277,24 +308,35 @@ export default function AdminDashboard({ userProfile, onLogout }) {
       {/* Main Content Area */}
       <main className="admin-main">
         <header className="admin-main-header">
-          {activeTab === "employees" && (
-            <>
-              <h1>Employee Directory</h1>
-              <p className="admin-main-subtitle">Manage employee profiles, schedule bindings, and manual log overrides.</p>
-            </>
-          )}
-          {activeTab === "daily" && (
-            <>
-              <h1>Daily Attendance Summary</h1>
-              <p className="admin-main-subtitle">Daily report of computed regular hours, overtime, night differential, and late logs.</p>
-            </>
-          )}
-          {activeTab === "weekly" && (
-            <>
-              <h1>Weekly Aggregate Report</h1>
-              <p className="admin-main-subtitle">Aggregated totals of shift logs, worked hours, and active days over a range.</p>
-            </>
-          )}
+          <div className="header-title-container">
+            <button className="sidebar-toggle" onClick={() => setIsDrawerOpen(true)}>
+              <svg viewBox="0 0 24 24">
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
+            <div>
+              {activeTab === "employees" && (
+                <>
+                  <h1>Employee Directory</h1>
+                  <p className="admin-main-subtitle">Manage employee profiles, schedule bindings, and manual log overrides.</p>
+                </>
+              )}
+              {activeTab === "daily" && (
+                <>
+                  <h1>Daily Attendance Summary</h1>
+                  <p className="admin-main-subtitle">Daily report of computed regular hours, overtime, night differential, and late logs.</p>
+                </>
+              )}
+              {activeTab === "weekly" && (
+                <>
+                  <h1>Weekly Aggregate Report</h1>
+                  <p className="admin-main-subtitle">Aggregated totals of shift logs, worked hours, and active days over a range.</p>
+                </>
+              )}
+            </div>
+          </div>
         </header>
 
         <div className="admin-main-content">
