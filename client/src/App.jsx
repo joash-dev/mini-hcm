@@ -18,6 +18,11 @@ function ProtectedRoute({ user, userProfile, loading, requiredRole, children }) 
     return <Navigate to="/login" replace />;
   }
 
+  /* Show loading screen if authenticated but profile is still resolving */
+  if (user && !userProfile) {
+    return <div className="loading-screen">Loading…</div>;
+  }
+
   if (requiredRole && userProfile?.role !== requiredRole) {
     /* Redirect to correct dashboard if role doesn't match */
     const target = userProfile?.role === "admin" ? "/admin" : "/dashboard";
@@ -42,6 +47,11 @@ export default function App() {
     if (user && userProfile) {
       const target = userProfile.role === "admin" ? "/admin" : "/dashboard";
       return <Navigate to={target} replace />;
+    }
+
+    /* Show loading screen if authenticated but profile is still resolving */
+    if (user && !userProfile) {
+      return <div className="loading-screen">Loading…</div>;
     }
 
     return children;
