@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+#firebase skills
+.agents/
+.firebaserc
+firebase.json
+skills-lock.json
