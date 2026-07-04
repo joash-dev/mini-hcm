@@ -113,6 +113,26 @@ export default function LoginPage({ onProfileCreated }) {
           <div className="auth-deco-text">
             <h2>Track time. Get paid right.</h2>
             <p>Simple time tracking for modern teams.</p>
+            <ul className="auth-features-list">
+              <li>
+                <svg className="feature-check" viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                <span>Automatic overtime & night differential tracking</span>
+              </li>
+              <li>
+                <svg className="feature-check" viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                <span>Real-time attendance dashboards</span>
+              </li>
+              <li>
+                <svg className="feature-check" viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                <span>Daily and weekly admin reports</span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
