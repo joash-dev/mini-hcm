@@ -133,6 +133,41 @@ body {
   min-height: 100vh;
   padding: var(--space-xl);
   background: var(--bg);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Outer page background blobs */
+.auth-page::before,
+.auth-page::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Top-left blob */
+.auth-page::before {
+  width: 500px;
+  height: 500px;
+  background: var(--accent-light);
+  top: -150px;
+  left: -150px;
+  opacity: 0.16;
+  filter: blur(95px);
+}
+
+/* Bottom-right blob */
+.auth-page::after {
+  width: 600px;
+  height: 600px;
+  background: var(--accent);
+  bottom: -200px;
+  right: -200px;
+  opacity: 0.18;
+  filter: blur(110px);
 }
 
 /* The outer split card */
