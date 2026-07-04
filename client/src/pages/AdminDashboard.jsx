@@ -36,9 +36,9 @@ export default function AdminDashboard({ userProfile, onLogout }) {
   // Logout confirmation modal state
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  // Lock body scroll when mobile drawer or logout modal is open
+  // Lock body scroll when mobile drawer, logout modal, or punch modal is open
   useEffect(() => {
-    if (isDrawerOpen || showLogoutConfirm) {
+    if (isDrawerOpen || showLogoutConfirm || showPunchModal) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -46,7 +46,7 @@ export default function AdminDashboard({ userProfile, onLogout }) {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isDrawerOpen, showLogoutConfirm]);
+  }, [isDrawerOpen, showLogoutConfirm, showPunchModal]);
 
   // Auto-close mobile drawer when switching tabs
   useEffect(() => {
@@ -662,6 +662,8 @@ export default function AdminDashboard({ userProfile, onLogout }) {
         </div>
       </main>
 
+      </div>
+
       {/* PUNCH MODAL OVERLAY */}
       {showPunchModal && (
         <div className="modal-overlay">
@@ -713,8 +715,6 @@ export default function AdminDashboard({ userProfile, onLogout }) {
           </div>
         </div>
       )}
-
-      </div>
 
       {showLogoutConfirm && (
         <div className="modal-overlay">
