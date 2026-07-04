@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { apiRequest } from "../services/api.js";
 import DataTable from "../components/DataTable.jsx";
+import { formatMinutes } from "../utils/formatters.js";
 
 export default function AdminDashboard({ userProfile, onLogout }) {
   const [activeTab, setActiveTab] = useState("employees"); // "employees" | "daily" | "weekly"
@@ -563,15 +564,15 @@ export default function AdminDashboard({ userProfile, onLogout }) {
                   <p>No summaries found for this date. Run computations for employees to populate.</p>
                 </div>
               ) : (
-                <DataTable headers={["Employee", "Regular (hrs)", "OT (hrs)", "ND (hrs)", "Late (min)", "Undertime (min)", "Status"]}>
+                <DataTable headers={["Employee", "Regular (hrs)", "OT (hrs)", "ND (hrs)", "Late", "Undertime", "Status"]}>
                   {dailyReport.map((row) => (
                     <tr key={row.id}>
                       <td className="font-semibold">{row.employeeName}</td>
                       <td>{row.regularHrs.toFixed(2)}</td>
                       <td>{row.ot.toFixed(2)}</td>
                       <td>{row.nd.toFixed(2)}</td>
-                      <td>{row.lateMinutes}</td>
-                      <td>{row.undertimeMinutes}</td>
+                      <td>{formatMinutes(row.lateMinutes)}</td>
+                      <td>{formatMinutes(row.undertimeMinutes)}</td>
                       <td>
                         <span className={`status-badge ${row.incomplete ? "status-badge--warning" : "status-badge--success"}`}>
                           {row.incomplete ? "Incomplete" : "Complete"}
@@ -633,15 +634,15 @@ export default function AdminDashboard({ userProfile, onLogout }) {
                   <p>No daily summaries found in this range.</p>
                 </div>
               ) : (
-                <DataTable headers={["Employee", "Regular (hrs)", "OT (hrs)", "ND (hrs)", "Late (min)", "Undertime (min)", "Days Worked", "Incompletes"]}>
+                <DataTable headers={["Employee", "Regular (hrs)", "OT (hrs)", "ND (hrs)", "Late", "Undertime", "Days Worked", "Incompletes"]}>
                   {weeklyReport.map((row) => (
                     <tr key={row.userId}>
                       <td className="font-semibold">{row.employeeName}</td>
                       <td>{row.regularHrs.toFixed(2)}</td>
                       <td>{row.ot.toFixed(2)}</td>
                       <td>{row.nd.toFixed(2)}</td>
-                      <td>{row.lateMinutes}</td>
-                      <td>{row.undertimeMinutes}</td>
+                      <td>{formatMinutes(row.lateMinutes)}</td>
+                      <td>{formatMinutes(row.undertimeMinutes)}</td>
                       <td>{row.daysWorked}</td>
                       <td>
                         <span className={row.incompleteCount > 0 ? "text-danger" : ""}>

@@ -4,6 +4,7 @@ import { useDailySummary } from "../hooks/useDailySummary.js";
 import PunchButton from "../components/PunchButton.jsx";
 import KpiCard from "../components/KpiCard.jsx";
 import DataTable from "../components/DataTable.jsx";
+import { formatMinutes } from "../utils/formatters.js";
 
 /**
  * Employee Dashboard.
@@ -71,14 +72,14 @@ export default function EmployeeDashboard({ userProfile, onLogout }) {
             />
             <KpiCard
               label="Late Time"
-              value={todaySummary ? todaySummary.lateMinutes : 0}
-              unit="min"
+              value={todaySummary ? formatMinutes(todaySummary.lateMinutes) : "0m"}
+              unit=""
               type="late"
             />
             <KpiCard
               label="Undertime"
-              value={todaySummary ? todaySummary.undertimeMinutes : 0}
-              unit="min"
+              value={todaySummary ? formatMinutes(todaySummary.undertimeMinutes) : "0m"}
+              unit=""
               type="undertime"
             />
           </div>
@@ -100,8 +101,8 @@ export default function EmployeeDashboard({ userProfile, onLogout }) {
                   <td>{row.regularHrs.toFixed(2)}</td>
                   <td>{row.ot.toFixed(2)}</td>
                   <td>{row.nd.toFixed(2)}</td>
-                  <td>{row.lateMinutes}</td>
-                  <td>{row.undertimeMinutes}</td>
+                  <td>{formatMinutes(row.lateMinutes)}</td>
+                  <td>{formatMinutes(row.undertimeMinutes)}</td>
                   <td>
                     <span className={`status-badge ${row.incomplete ? "status-badge--warning" : "status-badge--success"}`}>
                       {row.incomplete ? "Incomplete Punch" : "Complete"}
