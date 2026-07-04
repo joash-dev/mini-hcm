@@ -205,217 +205,385 @@ export default function AdminDashboard({ userProfile, onLogout }) {
     return d.toLocaleString();
   };
 
+  // Get initials for avatar display
+  const getInitials = (name) => {
+    if (!name) return "EE";
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return parts[0].substring(0, 2).toUpperCase();
+  };
+
   return (
-    <div className="dashboard">
-      <header className="dashboard-header">
-        <div className="dashboard-header-left">
-          <h1>Admin Dashboard</h1>
-          <p className="dashboard-greeting">
-            Welcome Administrator, <strong>{userProfile?.name || "Admin"}</strong>
-          </p>
+    <div className="admin-layout">
+      {/* Left Sidebar */}
+      <aside className="admin-sidebar">
+        <div className="sidebar-top">
+          <span className="sidebar-logo">Mini HCM</span>
         </div>
-        <button className="btn btn-secondary" onClick={onLogout}>
-          Sign Out
-        </button>
-      </header>
 
-      {/* Tab Navigation */}
-      <nav className="admin-tabs">
-        <button
-          className={`btn ${activeTab === "employees" ? "btn-primary" : "btn-secondary"}`}
-          onClick={() => setActiveTab("employees")}
-        >
-          Employees
-        </button>
-        <button
-          className={`btn ${activeTab === "daily" ? "btn-primary" : "btn-secondary"}`}
-          onClick={() => setActiveTab("daily")}
-        >
-          Daily Report
-        </button>
-        <button
-          className={`btn ${activeTab === "weekly" ? "btn-primary" : "btn-secondary"}`}
-          onClick={() => setActiveTab("weekly")}
-        >
-          Weekly Report
-        </button>
-      </nav>
+        <nav className="sidebar-nav">
+          <button
+            className={`sidebar-nav-item ${activeTab === "employees" ? "active" : ""}`}
+            onClick={() => setActiveTab("employees")}
+          >
+            <svg className="nav-icon" viewBox="0 0 24 24">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+            <span>Employees</span>
+          </button>
 
-      {error && <div className="auth-error">{error}</div>}
+          <button
+            className={`sidebar-nav-item ${activeTab === "daily" ? "active" : ""}`}
+            onClick={() => setActiveTab("daily")}
+          >
+            <svg className="nav-icon" viewBox="0 0 24 24">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+            <span>Daily Report</span>
+          </button>
 
-      {/* TAB 1: EMPLOYEE MANAGEMENT */}
-      {activeTab === "employees" && (
-        <div className={`admin-grid ${selectedEmp ? "admin-grid--split" : ""}`}>
-          {/* Employee list */}
-          <div className="kpi-section">
-            <h2>Employee Directory</h2>
-            {loading && employees.length === 0 ? (
-              <p>Loading directory…</p>
-            ) : (
-              <div className="employee-list">
-                {employees.map((emp) => (
-                  <button
-                    key={emp.id}
-                    className={`employee-list-item ${selectedEmp?.id === emp.id ? "employee-list-item--selected" : ""}`}
-                    onClick={() => handleSelectEmployee(emp)}
-                  >
-                    <div>
-                      <p className="emp-name">{emp.name}</p>
-                      <p className="emp-email">{emp.email}</p>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
+          <button
+            className={`sidebar-nav-item ${activeTab === "weekly" ? "active" : ""}`}
+            onClick={() => setActiveTab("weekly")}
+          >
+            <svg className="nav-icon" viewBox="0 0 24 24">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg>
+            <span>Weekly Report</span>
+          </button>
+        </nav>
+
+        <div className="sidebar-bottom">
+          <div className="admin-profile">
+            <p className="admin-name">{userProfile?.name || "Administrator"}</p>
+            <p className="admin-email">{userProfile?.email || "admin@hcm.com"}</p>
           </div>
+          <button className="btn btn-secondary sidebar-logout-btn" onClick={onLogout}>
+            Sign Out
+          </button>
+        </div>
+      </aside>
 
-          {/* Selected employee attendance list */}
-          {selectedEmp && (
+      {/* Main Content Area */}
+      <main className="admin-main">
+        <header className="admin-main-header">
+          {activeTab === "employees" && (
+            <>
+              <h1>Employee Directory</h1>
+              <p className="admin-main-subtitle">Manage employee profiles, schedule bindings, and manual log overrides.</p>
+            </>
+          )}
+          {activeTab === "daily" && (
+            <>
+              <h1>Daily Attendance Summary</h1>
+              <p className="admin-main-subtitle">Daily report of computed regular hours, overtime, night differential, and late logs.</p>
+            </>
+          )}
+          {activeTab === "weekly" && (
+            <>
+              <h1>Weekly Aggregate Report</h1>
+              <p className="admin-main-subtitle">Aggregated totals of shift logs, worked hours, and active days over a range.</p>
+            </>
+          )}
+        </header>
+
+        <div className="admin-main-content">
+          {error && <div className="auth-error" style={{ marginBottom: "1.5rem" }}>{error}</div>}
+
+          {/* TAB 1: EMPLOYEE MANAGEMENT */}
+          {activeTab === "employees" && (
+            <>
+              {/* Summary Stat Cards */}
+              <div className="admin-stats-grid">
+                <div className="kpi-card kpi-card--regular">
+                  <div className="kpi-icon">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                    </svg>
+                  </div>
+                  <span className="kpi-label">Total Employees</span>
+                  <div className="kpi-value-container">
+                    <span className="kpi-value">{employees.length}</span>
+                  </div>
+                </div>
+
+                <div className="kpi-card kpi-card--nd">
+                  <div className="kpi-icon">
+                    <svg viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                  </div>
+                  <span className="kpi-label">Default Shift</span>
+                  <div className="kpi-value-container">
+                    <span className="kpi-value">9.0</span>
+                    <span className="kpi-unit">hrs</span>
+                  </div>
+                </div>
+
+                <div className="kpi-card kpi-card--overtime">
+                  <div className="kpi-icon">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <line x1="16" y1="13" x2="8" y2="13" />
+                    </svg>
+                  </div>
+                  <span className="kpi-label">Selected Logs</span>
+                  <div className="kpi-value-container">
+                    <span className="kpi-value">{selectedEmp ? empAttendance.length : 0}</span>
+                    <span className="kpi-unit">entries</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className={`admin-grid ${selectedEmp ? "admin-grid--split" : ""}`}>
+                {/* Employee list */}
+                <div className="kpi-section">
+                  <h2>Employees List</h2>
+                  {loading && employees.length === 0 ? (
+                    <div className="empty-state">
+                      <div className="empty-state-icon">
+                        <svg viewBox="0 0 24 24">
+                          <circle cx="12" cy="12" r="10" />
+                          <line x1="12" y1="16" x2="12" y2="12" />
+                          <line x1="12" y1="8" x2="12.01" y2="8" />
+                        </svg>
+                      </div>
+                      <p>Loading directory…</p>
+                    </div>
+                  ) : (
+                    <div className="employee-list">
+                      {employees.map((emp) => (
+                        <button
+                          key={emp.id}
+                          className={`employee-list-item ${selectedEmp?.id === emp.id ? "employee-list-item--selected" : ""}`}
+                          onClick={() => handleSelectEmployee(emp)}
+                        >
+                          <div className="employee-avatar">
+                            {getInitials(emp.name)}
+                          </div>
+                          <div className="employee-details">
+                            <p className="emp-name">{emp.name}</p>
+                            <p className="emp-email">{emp.email}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Selected employee attendance list */}
+                {selectedEmp && (
+                  <div className="kpi-section">
+                    <div className="attendance-header">
+                      <h2>Attendance Logs: {selectedEmp.name}</h2>
+                      <button className="btn btn-primary" onClick={handleOpenAddPunch}>
+                        + Add Punch
+                      </button>
+                    </div>
+
+                    <p className="attendance-meta">
+                      Schedule: <strong>{selectedEmp.schedule?.start} to {selectedEmp.schedule?.end}</strong>
+                    </p>
+
+                    {loading && empAttendance.length === 0 ? (
+                      <div className="empty-state">
+                        <div className="empty-state-icon">
+                          <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                          </svg>
+                        </div>
+                        <p>Loading punch records…</p>
+                      </div>
+                    ) : empAttendance.length === 0 ? (
+                      <div className="empty-state">
+                        <div className="empty-state-icon">
+                          <svg viewBox="0 0 24 24">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                            <line x1="9" y1="9" x2="15" y2="9" />
+                            <line x1="9" y1="13" x2="15" y2="13" />
+                            <line x1="9" y1="17" x2="13" y2="17" />
+                          </svg>
+                        </div>
+                        <p>No punch logs found for this employee.</p>
+                      </div>
+                    ) : (
+                      <DataTable headers={["Date/Time", "Type", "Actions"]}>
+                        {empAttendance.map((punch) => {
+                          const punchDateString = new Date(punch.timestamp).toLocaleDateString("sv-SE");
+                          return (
+                            <tr key={punch.id}>
+                              <td className="font-semibold">{formatDateTime(punch.timestamp)}</td>
+                              <td>
+                                <span className={`status-badge ${punch.type === "in" ? "status-badge--success" : "status-badge--warning"}`}>
+                                  {punch.type.toUpperCase()}
+                                </span>
+                              </td>
+                              <td>
+                                <div style={{ display: "flex", gap: "0.5rem" }}>
+                                  <button className="btn btn-secondary btn-sm" onClick={() => handleOpenEditPunch(punch)}>
+                                    Edit
+                                  </button>
+                                  <button className="btn btn-primary btn-sm" onClick={() => handleRecompute(punchDateString)}>
+                                    Recompute
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </DataTable>
+                    )}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* TAB 2: DAILY REPORT */}
+          {activeTab === "daily" && (
             <div className="kpi-section">
-              <div className="attendance-header">
-                <h2>Attendance Logs: {selectedEmp.name}</h2>
-                <button className="btn btn-primary" onClick={handleOpenAddPunch}>
-                  + Add Punch
+              <div className="report-controls">
+                <input
+                  type="date"
+                  value={dailyDate}
+                  onChange={(e) => setDailyDate(e.target.value)}
+                />
+                <button className="btn btn-primary" onClick={loadDailyReport}>
+                  Generate Report
                 </button>
               </div>
 
-              <p className="attendance-meta">
-                Schedule: <strong>{selectedEmp.schedule?.start} to {selectedEmp.schedule?.end}</strong>
-              </p>
-
-              {loading && empAttendance.length === 0 ? (
-                <p>Loading punch records…</p>
-              ) : empAttendance.length === 0 ? (
-                <div className="empty-state">No punch logs found for this employee.</div>
+              {loading ? (
+                <div className="empty-state">
+                  <div className="empty-state-icon">
+                    <svg viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="16" x2="12" y2="12" />
+                      <line x1="12" y1="8" x2="12.01" y2="8" />
+                    </svg>
+                  </div>
+                  <p>Loading report data…</p>
+                </div>
+              ) : dailyReport.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-state-icon">
+                    <svg viewBox="0 0 24 24">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                      <line x1="9" y1="9" x2="15" y2="9" />
+                      <line x1="9" y1="13" x2="15" y2="13" />
+                      <line x1="9" y1="17" x2="13" y2="17" />
+                    </svg>
+                  </div>
+                  <p>No summaries found for this date. Run computations for employees to populate.</p>
+                </div>
               ) : (
-                <DataTable headers={["Date/Time", "Type", "Actions"]}>
-                  {empAttendance.map((punch) => {
-                    const punchDateString = new Date(punch.timestamp).toLocaleDateString("sv-SE");
-                    return (
-                      <tr key={punch.id}>
-                        <td className="font-semibold">{formatDateTime(punch.timestamp)}</td>
-                        <td>
-                          <span className={`status-badge ${punch.type === "in" ? "status-badge--success" : "status-badge--warning"}`}>
-                            {punch.type.toUpperCase()}
-                          </span>
-                        </td>
-                        <td>
-                          <div style={{ display: "flex", gap: "0.5rem" }}>
-                            <button className="btn btn-secondary btn-sm" onClick={() => handleOpenEditPunch(punch)}>
-                              Edit
-                            </button>
-                            <button className="btn btn-primary btn-sm" onClick={() => handleRecompute(punchDateString)}>
-                              Recompute
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                <DataTable headers={["Employee", "Regular (hrs)", "OT (hrs)", "ND (hrs)", "Late (min)", "Undertime (min)", "Status"]}>
+                  {dailyReport.map((row) => (
+                    <tr key={row.id}>
+                      <td className="font-semibold">{row.employeeName}</td>
+                      <td>{row.regularHrs.toFixed(2)}</td>
+                      <td>{row.ot.toFixed(2)}</td>
+                      <td>{row.nd.toFixed(2)}</td>
+                      <td>{row.lateMinutes}</td>
+                      <td>{row.undertimeMinutes}</td>
+                      <td>
+                        <span className={`status-badge ${row.incomplete ? "status-badge--warning" : "status-badge--success"}`}>
+                          {row.incomplete ? "Incomplete" : "Complete"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </DataTable>
+              )}
+            </div>
+          )}
+
+          {/* TAB 3: WEEKLY REPORT */}
+          {activeTab === "weekly" && (
+            <div className="kpi-section">
+              <div className="report-controls">
+                <div>
+                  <label>Start Date:</label>
+                  <input
+                    type="date"
+                    value={weeklyStart}
+                    onChange={(e) => setWeeklyStart(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label>End Date:</label>
+                  <input
+                    type="date"
+                    value={weeklyEnd}
+                    onChange={(e) => setWeeklyEnd(e.target.value)}
+                  />
+                </div>
+                <button className="btn btn-primary" onClick={loadWeeklyReport}>
+                  Generate Aggregate
+                </button>
+              </div>
+
+              {loading ? (
+                <div className="empty-state">
+                  <div className="empty-state-icon">
+                    <svg viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="16" x2="12" y2="12" />
+                      <line x1="12" y1="8" x2="12.01" y2="8" />
+                    </svg>
+                  </div>
+                  <p>Aggregating report data…</p>
+                </div>
+              ) : weeklyReport.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-state-icon">
+                    <svg viewBox="0 0 24 24">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                      <line x1="9" y1="9" x2="15" y2="9" />
+                      <line x1="9" y1="13" x2="15" y2="13" />
+                      <line x1="9" y1="17" x2="13" y2="17" />
+                    </svg>
+                  </div>
+                  <p>No daily summaries found in this range.</p>
+                </div>
+              ) : (
+                <DataTable headers={["Employee", "Regular (hrs)", "OT (hrs)", "ND (hrs)", "Late (min)", "Undertime (min)", "Days Worked", "Incompletes"]}>
+                  {weeklyReport.map((row) => (
+                    <tr key={row.userId}>
+                      <td className="font-semibold">{row.employeeName}</td>
+                      <td>{row.regularHrs.toFixed(2)}</td>
+                      <td>{row.ot.toFixed(2)}</td>
+                      <td>{row.nd.toFixed(2)}</td>
+                      <td>{row.lateMinutes}</td>
+                      <td>{row.undertimeMinutes}</td>
+                      <td>{row.daysWorked}</td>
+                      <td>
+                        <span className={row.incompleteCount > 0 ? "text-danger" : ""}>
+                          {row.incompleteCount}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
                 </DataTable>
               )}
             </div>
           )}
         </div>
-      )}
-
-      {/* TAB 2: DAILY REPORT */}
-      {activeTab === "daily" && (
-        <div className="kpi-section">
-          <h2>Daily Attendance Summary</h2>
-          <div className="report-controls">
-            <input
-              type="date"
-              value={dailyDate}
-              onChange={(e) => setDailyDate(e.target.value)}
-            />
-            <button className="btn btn-primary" onClick={loadDailyReport}>
-              Generate Report
-            </button>
-          </div>
-
-          {loading ? (
-            <p>Loading report data…</p>
-          ) : dailyReport.length === 0 ? (
-            <div className="empty-state">No summaries found for this date. Run computations for employees to populate.</div>
-          ) : (
-            <DataTable headers={["Employee", "Regular (hrs)", "OT (hrs)", "ND (hrs)", "Late (min)", "Undertime (min)", "Status"]}>
-              {dailyReport.map((row) => (
-                <tr key={row.id}>
-                  <td className="font-semibold">{row.employeeName}</td>
-                  <td>{row.regularHrs.toFixed(2)}</td>
-                  <td>{row.ot.toFixed(2)}</td>
-                  <td>{row.nd.toFixed(2)}</td>
-                  <td>{row.lateMinutes}</td>
-                  <td>{row.undertimeMinutes}</td>
-                  <td>
-                    <span className={`status-badge ${row.incomplete ? "status-badge--warning" : "status-badge--success"}`}>
-                      {row.incomplete ? "Incomplete" : "Complete"}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </DataTable>
-          )}
-        </div>
-      )}
-
-      {/* TAB 3: WEEKLY REPORT */}
-      {activeTab === "weekly" && (
-        <div className="kpi-section">
-          <h2>Weekly Aggregate Report</h2>
-          <p className="report-description">
-            Aggregates sums of hours and minutes over the selected range (usually Monday to Sunday).
-          </p>
-
-          <div className="report-controls">
-            <div>
-              <label>Start Date:</label>
-              <input
-                type="date"
-                value={weeklyStart}
-                onChange={(e) => setWeeklyStart(e.target.value)}
-              />
-            </div>
-            <div>
-              <label>End Date:</label>
-              <input
-                type="date"
-                value={weeklyEnd}
-                onChange={(e) => setWeeklyEnd(e.target.value)}
-              />
-            </div>
-            <button className="btn btn-primary" onClick={loadWeeklyReport}>
-              Generate Aggregate
-            </button>
-          </div>
-
-          {loading ? (
-            <p>Aggregating report data…</p>
-          ) : weeklyReport.length === 0 ? (
-            <div className="empty-state">No daily summaries found in this range.</div>
-          ) : (
-            <DataTable headers={["Employee", "Regular (hrs)", "OT (hrs)", "ND (hrs)", "Late (min)", "Undertime (min)", "Days Worked", "Incompletes"]}>
-              {weeklyReport.map((row) => (
-                <tr key={row.userId}>
-                  <td className="font-semibold">{row.employeeName}</td>
-                  <td>{row.regularHrs.toFixed(2)}</td>
-                  <td>{row.ot.toFixed(2)}</td>
-                  <td>{row.nd.toFixed(2)}</td>
-                  <td>{row.lateMinutes}</td>
-                  <td>{row.undertimeMinutes}</td>
-                  <td>{row.daysWorked}</td>
-                  <td>
-                    <span className={row.incompleteCount > 0 ? "text-danger" : ""}>
-                      {row.incompleteCount}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </DataTable>
-          )}
-        </div>
-      )}
+      </main>
 
       {/* PUNCH MODAL OVERLAY */}
       {showPunchModal && (
