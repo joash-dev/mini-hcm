@@ -47,58 +47,97 @@ export default function RegisterPage({ onProfileCreated }) {
 
   return (
     <div className="auth-page">
-      <div className="auth-card">
-        <h1>Create Account</h1>
-        <p className="auth-subtitle">Join Mini HCM to start tracking your time</p>
+      <div className="auth-split-card">
+        {/* Left Panel: Form */}
+        <div className="auth-form-panel">
+          <h1>Create Account</h1>
+          <p className="auth-subtitle">Join Mini HCM to start tracking your time</p>
 
-        {error && <div className="auth-error">{error}</div>}
+          {error && <div className="auth-error">{error}</div>}
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="register-name">Full Name</label>
-            <input
-              id="register-name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Juan Dela Cruz"
-              required
-            />
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="form-group">
+              <label htmlFor="register-name">Full Name</label>
+              <div className="input-with-icon">
+                <span className="input-icon">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                </span>
+                <input
+                  id="register-name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Juan Dela Cruz"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="register-email">Email</label>
+              <div className="input-with-icon">
+                <span className="input-icon">
+                  <svg viewBox="0 0 24 24">
+                    <rect x="3" y="4" width="18" height="16" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
+                </span>
+                <input
+                  id="register-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="juan@example.com"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="register-password">Password</label>
+              <div className="input-with-icon">
+                <span className="input-icon">
+                  <svg viewBox="0 0 24 24">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                </span>
+                <input
+                  id="register-password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="At least 6 characters"
+                  minLength={6}
+                  required
+                />
+              </div>
+            </div>
+
+            <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
+              {submitting ? "Creating account…" : "Register"}
+            </button>
+          </form>
+
+          <p className="auth-switch">
+            Already have an account? <Link to="/login">Sign in</Link>
+          </p>
+        </div>
+
+        {/* Right Panel: Decorative */}
+        <div className="auth-deco-panel">
+          <div className="deco-blob deco-blob--1"></div>
+          <div className="deco-blob deco-blob--2"></div>
+          <div className="deco-blob deco-blob--3"></div>
+          <div className="deco-blob deco-blob--4"></div>
+          <div className="auth-deco-text">
+            <h2>Track time. Get paid right.</h2>
+            <p>Simple time tracking for modern teams.</p>
           </div>
-
-          <div className="form-group">
-            <label htmlFor="register-email">Email</label>
-            <input
-              id="register-email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="juan@example.com"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="register-password">Password</label>
-            <input
-              id="register-password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 6 characters"
-              minLength={6}
-              required
-            />
-          </div>
-
-          <button type="submit" className="btn btn-primary" disabled={submitting}>
-            {submitting ? "Creating account…" : "Register"}
-          </button>
-        </form>
-
-        <p className="auth-switch">
-          Already have an account? <Link to="/login">Sign in</Link>
-        </p>
+        </div>
       </div>
     </div>
   );

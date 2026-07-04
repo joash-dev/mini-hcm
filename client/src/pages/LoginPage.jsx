@@ -45,45 +45,76 @@ export default function LoginPage({ onProfileCreated }) {
 
   return (
     <div className="auth-page">
-      <div className="auth-card">
-        <h1>Welcome Back</h1>
-        <p className="auth-subtitle">Sign in to your Mini HCM account</p>
+      <div className="auth-split-card">
+        {/* Left Panel: Form */}
+        <div className="auth-form-panel">
+          <h1>Welcome Back</h1>
+          <p className="auth-subtitle">Sign in to your Mini HCM account</p>
 
-        {error && <div className="auth-error">{error}</div>}
+          {error && <div className="auth-error">{error}</div>}
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="login-email">Email</label>
-            <input
-              id="login-email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="juan@example.com"
-              required
-            />
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="form-group">
+              <label htmlFor="login-email">Email</label>
+              <div className="input-with-icon">
+                <span className="input-icon">
+                  <svg viewBox="0 0 24 24">
+                    <rect x="3" y="4" width="18" height="16" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
+                </span>
+                <input
+                  id="login-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="user@example.com"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="login-password">Password</label>
+              <div className="input-with-icon">
+                <span className="input-icon">
+                  <svg viewBox="0 0 24 24">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                </span>
+                <input
+                  id="login-password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Your password"
+                  required
+                />
+              </div>
+            </div>
+
+            <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
+              {submitting ? "Signing in…" : "Sign In"}
+            </button>
+          </form>
+
+          <p className="auth-switch">
+            Don&apos;t have an account? <Link to="/register">Register</Link>
+          </p>
+        </div>
+
+        {/* Right Panel: Decorative */}
+        <div className="auth-deco-panel">
+          <div className="deco-blob deco-blob--1"></div>
+          <div className="deco-blob deco-blob--2"></div>
+          <div className="deco-blob deco-blob--3"></div>
+          <div className="deco-blob deco-blob--4"></div>
+          <div className="auth-deco-text">
+            <h2>Track time. Get paid right.</h2>
+            <p>Simple time tracking for modern teams.</p>
           </div>
-
-          <div className="form-group">
-            <label htmlFor="login-password">Password</label>
-            <input
-              id="login-password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Your password"
-              required
-            />
-          </div>
-
-          <button type="submit" className="btn btn-primary" disabled={submitting}>
-            {submitting ? "Signing in…" : "Sign In"}
-          </button>
-        </form>
-
-        <p className="auth-switch">
-          Don&apos;t have an account? <Link to="/register">Register</Link>
-        </p>
+        </div>
       </div>
     </div>
   );

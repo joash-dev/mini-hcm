@@ -220,7 +220,7 @@ export default function AdminDashboard({ userProfile, onLogout }) {
       </header>
 
       {/* Tab Navigation */}
-      <nav className="admin-nav" style={{ display: "flex", gap: "1rem", marginBottom: "2rem" }}>
+      <nav className="admin-tabs">
         <button
           className={`btn ${activeTab === "employees" ? "btn-primary" : "btn-secondary"}`}
           onClick={() => setActiveTab("employees")}
@@ -241,28 +241,27 @@ export default function AdminDashboard({ userProfile, onLogout }) {
         </button>
       </nav>
 
-      {error && <div className="auth-error" style={{ marginBottom: "1.5rem" }}>{error}</div>}
+      {error && <div className="auth-error">{error}</div>}
 
       {/* TAB 1: EMPLOYEE MANAGEMENT */}
       {activeTab === "employees" && (
-        <div className="admin-grid" style={{ display: "grid", gridTemplateColumns: selectedEmp ? "1fr 2fr" : "1fr", gap: "2rem" }}>
+        <div className={`admin-grid ${selectedEmp ? "admin-grid--split" : ""}`}>
           {/* Employee list */}
           <div className="kpi-section">
             <h2>Employee Directory</h2>
             {loading && employees.length === 0 ? (
               <p>Loading directory…</p>
             ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+              <div className="employee-list">
                 {employees.map((emp) => (
                   <button
                     key={emp.id}
-                    className={`btn ${selectedEmp?.id === emp.id ? "btn-primary" : "btn-secondary"}`}
-                    style={{ justifyContent: "flex-start", width: "100%", padding: "1rem" }}
+                    className={`employee-list-item ${selectedEmp?.id === emp.id ? "employee-list-item--selected" : ""}`}
                     onClick={() => handleSelectEmployee(emp)}
                   >
-                    <div style={{ textAlign: "left" }}>
-                      <p style={{ fontWeight: "bold" }}>{emp.name}</p>
-                      <p style={{ fontSize: "0.75rem", opacity: 0.7 }}>{emp.email}</p>
+                    <div>
+                      <p className="emp-name">{emp.name}</p>
+                      <p className="emp-email">{emp.email}</p>
                     </div>
                   </button>
                 ))}
@@ -273,14 +272,14 @@ export default function AdminDashboard({ userProfile, onLogout }) {
           {/* Selected employee attendance list */}
           {selectedEmp && (
             <div className="kpi-section">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div className="attendance-header">
                 <h2>Attendance Logs: {selectedEmp.name}</h2>
                 <button className="btn btn-primary" onClick={handleOpenAddPunch}>
                   + Add Punch
                 </button>
               </div>
 
-              <p style={{ fontSize: "var(--font-size-sm)", color: "var(--color-text-muted)" }}>
+              <p className="attendance-meta">
                 Schedule: <strong>{selectedEmp.schedule?.start} to {selectedEmp.schedule?.end}</strong>
               </p>
 
@@ -302,10 +301,10 @@ export default function AdminDashboard({ userProfile, onLogout }) {
                         </td>
                         <td>
                           <div style={{ display: "flex", gap: "0.5rem" }}>
-                            <button className="btn btn-secondary" style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem" }} onClick={() => handleOpenEditPunch(punch)}>
+                            <button className="btn btn-secondary btn-sm" onClick={() => handleOpenEditPunch(punch)}>
                               Edit
                             </button>
-                            <button className="btn btn-primary" style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem" }} onClick={() => handleRecompute(punchDateString)}>
+                            <button className="btn btn-primary btn-sm" onClick={() => handleRecompute(punchDateString)}>
                               Recompute
                             </button>
                           </div>
@@ -324,12 +323,11 @@ export default function AdminDashboard({ userProfile, onLogout }) {
       {activeTab === "daily" && (
         <div className="kpi-section">
           <h2>Daily Attendance Summary</h2>
-          <div style={{ display: "flex", gap: "1rem", alignItems: "center", marginBottom: "1rem" }}>
+          <div className="report-controls">
             <input
               type="date"
               value={dailyDate}
               onChange={(e) => setDailyDate(e.target.value)}
-              style={{ padding: "0.5rem", borderRadius: "var(--radius-sm)", border: "1px solid var(--color-border)", background: "var(--color-surface)", color: "var(--color-text)" }}
             />
             <button className="btn btn-primary" onClick={loadDailyReport}>
               Generate Report
@@ -366,30 +364,28 @@ export default function AdminDashboard({ userProfile, onLogout }) {
       {activeTab === "weekly" && (
         <div className="kpi-section">
           <h2>Weekly Aggregate Report</h2>
-          <p style={{ fontSize: "var(--font-size-sm)", color: "var(--color-text-muted)", marginBottom: "1rem" }}>
+          <p className="report-description">
             Aggregates sums of hours and minutes over the selected range (usually Monday to Sunday).
           </p>
 
-          <div style={{ display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap", marginBottom: "1rem" }}>
+          <div className="report-controls">
             <div>
-              <label style={{ marginRight: "0.5rem", fontSize: "var(--font-size-sm)" }}>Start Date:</label>
+              <label>Start Date:</label>
               <input
                 type="date"
                 value={weeklyStart}
                 onChange={(e) => setWeeklyStart(e.target.value)}
-                style={{ padding: "0.5rem", borderRadius: "var(--radius-sm)", border: "1px solid var(--color-border)", background: "var(--color-surface)", color: "var(--color-text)" }}
               />
             </div>
             <div>
-              <label style={{ marginRight: "0.5rem", fontSize: "var(--font-size-sm)" }}>End Date:</label>
+              <label>End Date:</label>
               <input
                 type="date"
                 value={weeklyEnd}
                 onChange={(e) => setWeeklyEnd(e.target.value)}
-                style={{ padding: "0.5rem", borderRadius: "var(--radius-sm)", border: "1px solid var(--color-border)", background: "var(--color-surface)", color: "var(--color-text)" }}
               />
             </div>
-            <button className="btn btn-primary" onClick={loadWeeklyReport} style={{ alignSelf: "flex-end" }}>
+            <button className="btn btn-primary" onClick={loadWeeklyReport}>
               Generate Aggregate
             </button>
           </div>
@@ -423,18 +419,17 @@ export default function AdminDashboard({ userProfile, onLogout }) {
 
       {/* PUNCH MODAL OVERLAY */}
       {showPunchModal && (
-        <div className="modal-overlay" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.7)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000 }}>
-          <div className="auth-card" style={{ maxWidth: "450px" }}>
+        <div className="modal-overlay">
+          <div className="modal-card">
             <h2>{editingPunch ? "Edit Punch Log" : "Add Punch Log"}</h2>
             <p className="auth-subtitle">Overriding for {selectedEmp?.name}</p>
 
-            <form onSubmit={handleSavePunch} className="auth-form" style={{ marginTop: "1rem" }}>
+            <form onSubmit={handleSavePunch} className="auth-form">
               <div className="form-group">
                 <label>Punch Type</label>
                 <select
                   value={punchType}
                   onChange={(e) => setPunchType(e.target.value)}
-                  style={{ padding: "0.5rem", borderRadius: "var(--radius-sm)", border: "1px solid var(--color-border)", background: "var(--color-bg)", color: "var(--color-text)" }}
                 >
                   <option value="in">PUNCH IN</option>
                   <option value="out">PUNCH OUT</option>
@@ -461,11 +456,11 @@ export default function AdminDashboard({ userProfile, onLogout }) {
                 />
               </div>
 
-              <div style={{ display: "flex", gap: "1rem", marginTop: "1.5rem" }}>
-                <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>
+              <div className="modal-actions">
+                <button type="submit" className="btn btn-primary">
                   Save & Compute
                 </button>
-                <button type="button" className="btn btn-secondary" style={{ flex: 1 }} onClick={() => setShowPunchModal(false)}>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowPunchModal(false)}>
                   Cancel
                 </button>
               </div>

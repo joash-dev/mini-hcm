@@ -45,7 +45,7 @@ export default function EmployeeDashboard({ userProfile, onLogout }) {
           punch={punch}
         />
 
-        {error && <div className="auth-error" style={{ marginTop: "1rem" }}>{error}</div>}
+        {error && <div className="auth-error">{error}</div>}
 
         {/* today's KPI Summary Metrics */}
         <section className="kpi-section">
